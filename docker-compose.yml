@@ -46,7 +46,6 @@ services:
       KC_HTTP_ENABLED: true
       KC_PROXY_TRUSTED_ADDRESSES: "172.16.0.0/12"
       KC_PROXY_HEADERS: "xforwarded"
-      KC_METRICS_ENABLED: true
     networks:
       - proxy
       - database
