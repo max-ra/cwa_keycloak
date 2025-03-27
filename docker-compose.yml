@@ -1,0 +1,52 @@
+networks:
+  proxy:
+    name: backbone_proxy
+    external: true
+  monitoring:
+    name: backbone_monitoring
+    external: true
+  database:
+    name: backbone_database
+    external: true
+
+services:
+  keycloak:
+    build:
+      context: keycloak
+      args:
+        KEYCLOAK_VERSION: 26.1.4
+        KC_DB: postgres
+        KC_FEATURES: "admin-fine-grained-authz"
+    container_name: keycloak
+    command: start --optimized
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=backbone_proxy
+      - traefik.http.routers.keycloak.ruleSyntax=v3
+      - traefik.http.routers.keycloak.tls=true
+      - traefik.http.routers.keycloak.tls.certresolver=${CERTRESOLVER:-}
+      - traefik.http.routers.keycloak.entryPoints=https
+      - traefik.http.routers.keycloak.rule=Host("${APPLICATION_FQDN}")
+      - traefik.http.routers.keycloak.service=keycloak-service
+      - traefik.http.services.keycloak-service.loadbalancer.server.port=8080
+    environment:
+      TZ: Europe/Berlin
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_DATABASE: ${KEYCLOAK_DB}
+      KC_DB_USERNAME: ${KEYCLOAK_DB_USER}
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASS}
+      KC_DB_SCHEMA: public
+      KC_BOOTSTRAP_ADMIN: ${KEYCLOAK_USER}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_PASSWORD}
+      KC_HOSTNAME: "https://${KEYCLOAK_FQDN}"
+      KC_HTTP_ENABLED: true
+      KC_PROXY_TRUSTED_ADDRESSES: "172.16.0.0/12"
+      KC_PROXY_HEADERS: "xforwarded"
+      VIRTUAL_HOST: ${KEYCLOAK_FQDN}
+      VIRTUAL_PORT: 8080
+      LETSENCRYPT_HOST: ${KEYCLOAK_FQDN}
+      LETSENCRYPT_EMAIL: ${KEYCLOAK_LC_MAIL}
+    networks:
+      - proxy
+      - database
