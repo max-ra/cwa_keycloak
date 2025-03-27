@@ -31,7 +31,7 @@ services:
       - traefik.http.routers.keycloak.service=keycloak-service
       - traefik.http.services.keycloak-service.loadbalancer.server.port=8080
       - prometheus.scrape=true
-      - prometheus.port=8080
+      - prometheus.port=9000
       - prometheus.host=${APPLICATION_FQDN:-} 
     environment:
       TZ: Europe/Berlin
