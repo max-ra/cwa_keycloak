@@ -30,6 +30,9 @@ services:
       - traefik.http.routers.keycloak.rule=Host("${APPLICATION_FQDN}")
       - traefik.http.routers.keycloak.service=keycloak-service
       - traefik.http.services.keycloak-service.loadbalancer.server.port=8080
+      - prometheus.scrape=true
+      - prometheus.port=8080
+      - prometheus.host=${APPLICATION_FQDN:-} 
     environment:
       TZ: Europe/Berlin
       KC_DB_URL_HOST: ${KEYCLOAK_DB_HOST:-postgres}
@@ -43,6 +46,8 @@ services:
       KC_HTTP_ENABLED: true
       KC_PROXY_TRUSTED_ADDRESSES: "172.16.0.0/12"
       KC_PROXY_HEADERS: "xforwarded"
+      KC_METRICS_ENABLED: true
     networks:
       - proxy
       - database
+      - monitoring
