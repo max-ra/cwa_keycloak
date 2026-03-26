@@ -14,7 +14,7 @@ services:
     build:
       context: keycloak
       args:
-        KEYCLOAK_VERSION: 26.1.4
+        KEYCLOAK_VERSION: 26.5.6
         KC_DB: postgres
         KC_FEATURES: "admin-fine-grained-authz"
     container_name: keycloak
