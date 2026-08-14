@@ -1,5 +1,5 @@
 # Keycloak custom build for postgres
-ARG KEYCLOAK_VERSION=quay.io/keycloak/keycloak:26.6.1
+ARG KEYCLOAK_VERSION=quay.io/keycloak/keycloak:26.7.1
 
 FROM ${KEYCLOAK_VERSION} AS builder
 
